@@ -1,6 +1,5 @@
 //
 //  SDLRender.h
-
 //
 
 #ifndef SDLRender_h
@@ -10,23 +9,22 @@
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
 
-
-//Screen dimension constants
+// Screen dimension constants
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 
-//Starting speed
+// Starting speed
 extern int speed;
 
-//Intilise SDL Items
+// Intilise SDL Items
 extern SDL_Texture* loadTexture( char *path );
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern SDL_Texture* texture;
 
 bool InitEverything();
-bool InitSDL();
 
+bool InitSDL();
 
 bool loadMedia();
 
@@ -42,7 +40,6 @@ void SetupRenderer();
 
 void Render();
 
-//Frees media and shuts down SDL
-void closeAll();
+void closeAll();            // Frees media and shuts down SDL
 
 #endif /* SDLRender_h */

@@ -1,6 +1,5 @@
 //
 //  structs.h
-
 //
 
 #ifndef structs_h

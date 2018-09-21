@@ -1,20 +1,19 @@
 //
 //  Game.c
-
 //
 
-#include <stdio.h>              //Standard Libary
-#include "Game.h"               //Own Header
-#include "structs.h"            //For Node Structure
-#include "SDLRender.h"          //For SDL Items
-#include "snakeConstructor.h"   //For updating Snake Segment Nodes
-#include "foodSpawn.h"          //For food Collisions
+#include <stdio.h>              // Standard Libary
+#include "Game.h"               // Own Header
+#include "structs.h"            // For Node Structure
+#include "SDLRender.h"          // For SDL Items
+#include "snakeConstructor.h"   // For updating Snake Segment Nodes
+#include "foodSpawn.h"          // For food Collisions
 
-//Direction Indicators
-bool north = false; //UP
-bool east = false;  //RIGHT
-bool south = false; //DOWN
-bool west = false;  //LEFT
+// Direction Indicators
+bool north = false; // UP
+bool east = false;  // RIGHT
+bool south = false; // DOWN
+bool west = false;  // LEFT
 
 int score;
 char titleText[255];
@@ -24,10 +23,11 @@ void checker(Node *theNode, Node *origNode){
     if(theNode->id != origNode->id && theNode->xPos == origNode->xPos && theNode->yPos == origNode->yPos  ){
         printf("GAME OVER - SCORE: %d\n", score);
         printf("Node[%d] collided with Node[%d]\n", origNode->id, theNode->id);
+        closeAll();
         exit(0);
     }
 
-    //Recursive
+    // Recursive
     if(theNode->child != NULL ){
         checker(theNode->child, origNode);
     }
@@ -46,8 +46,9 @@ void updateAll(Node *node){
     
     // Screen edge detection
     if(node->xPos > SCREEN_WIDTH || node->xPos < 0 || node->yPos > SCREEN_HEIGHT || node->yPos < 0){
-        //Out of bounds
+        // Out of bounds
         printf("GAME OVER - SCORE: %d\n", score);
+        closeAll();
         exit(0);
     }
 
@@ -58,23 +59,22 @@ void updateAll(Node *node){
         SDL_SetWindowTitle(window, titleText);              // Set title string
         playSound();                                        // Play pickup sound effect
         makeChild(node);                                    // Grow snake with a new node
-        foodX = 1;                                       // Reset food            
-        foodY = 1;                                       // ^
+        foodX = 1;                                          // Reset food            
+        foodY = 1;                                          // ^
         speed -= 5;                                         // Increase game speed
     }
     
-    //Sets rect coords based of struct
+    // Sets rect coords based of struct
     rect.x = node->xPos;
     rect.y = node->yPos;
     
-    //Render red filled quad
-    //RGB + Alpha
-
+    // Render red filled quad
+    // RGB + Alpha
     SDL_SetRenderDrawColor( renderer, node->r, node->g, node->b, 0xFF );
     SDL_RenderFillRect( renderer, &rect );
     SDL_RenderFillRect( renderer, &rect );
     
-    //Recursive
+    // Recursive
     if(node->child != NULL ){
         updateAll(node->child);
     }
@@ -82,22 +82,22 @@ void updateAll(Node *node){
 }
 
 
-
-
 void RunGame(Node *head)
 {
     bool loop = true;
     
-    //Load media
+    // Load media
     if( !loadMedia() )
     {
         printf( "Failed to load media!\n" );
+        closeAll();
         exit(0);
     }
 
     if( !loadSound() )
     {
         printf( "Failed to load sound!\n" );
+        closeAll();
         exit(0);
     }
     
@@ -149,7 +149,7 @@ void RunGame(Node *head)
                         
                         break;
                     case SDLK_SPACE:
-                        //Create segment
+                        // Create segment
                         break;
                     default :
                         break;
@@ -158,7 +158,7 @@ void RunGame(Node *head)
         }
         
         
-        //Movement - Calls functions to adjust x,y of Snake segments
+        // Movement - Calls functions to adjust x,y of Snake segments
         if(north == true){
             updateSnake(head, 'N');
         }else if(east == true){
@@ -169,10 +169,10 @@ void RunGame(Node *head)
             updateSnake(head, 'W');
         }
         
-        //Calls Render function to render, snake & food
+        // Calls Render function to render, snake & food
         Render(head);
         
-        //Refresh rate (Frame Rate)
+        // Refresh rate (Frame Rate)
         SDL_Delay( speed );
     }
 }

@@ -1,45 +1,42 @@
 //
 //  SDLRender.c
-
 //
 
-#include <stdio.h>              //Standard Libary
-#include "SDLRender.h"          //Own Header
-#include "foodSpawn.h"          //For rendering food
-#include "Game.h"               //For Update All
+#include <stdio.h>              // Standard Libary
+#include "SDLRender.h"          // Own Header
+#include "foodSpawn.h"          // For rendering food
+#include "Game.h"               // For Update All
 
 
-//Screen dimension constants
+// Screen dimension constants
 const int SCREEN_WIDTH = 1000;
 const int SCREEN_HEIGHT = 800;
 
-//Starting speed
+// Starting speed
 int speed = 170;
-
 
 SDL_Texture* loadTexture( char *path );
 SDL_Window* window;
 SDL_Renderer* renderer;
 SDL_Texture* texture = NULL;
 
+// Audio vars
 SDL_AudioSpec wavSpec;
 SDL_AudioDeviceID deviceId;
 Uint32 wavLength;
 Uint8 *wavBuffer;
 
 
-
-
 void Render(Node *head)
 {
-    //Clear screen
+    // Clear screen
     SDL_SetRenderDrawColor( renderer, 0xFF, 0xFF, 0xFF, 0xFF );
     SDL_RenderClear( renderer );
     
-    //Render texture to screen
+    // Render texture to screen
     SDL_RenderCopy( renderer, texture, NULL, NULL );
     
-    //Call recursive draw function
+    // Call recursive draw function
     updateAll( head );
     
     foodSpawn( head );
@@ -48,9 +45,6 @@ void Render(Node *head)
     SDL_RenderPresent( renderer );
     
 }
-
-
-
 
 bool InitEverything()
 {
@@ -81,7 +75,7 @@ bool InitSDL()
 bool CreateWindow()
 {
     
-    //Set texture filtering to linear
+    // Set texture filtering to linear
     if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
     {
         printf( "Warning: Linear texture filtering not enabled!" );
@@ -108,7 +102,7 @@ bool CreateRenderer()
         return false;
     }
     
-    //Initialize PNG loading
+    // Initialize PNG loading
     int imgFlags = IMG_INIT_PNG;
     if( !( IMG_Init( imgFlags ) & imgFlags ) )
     {
@@ -131,10 +125,10 @@ void SetupRenderer()
 
 bool loadMedia()
 {
-    //Loading success flag
+    // Loading success flag
     bool success = true;
     
-    //Load PNG texture
+    // Load PNG texture
     texture = loadTexture( "texture.png" );
     if( texture == NULL )
     {
@@ -142,18 +136,13 @@ bool loadMedia()
         success = false;
     }
 
-
-
-    //--------
-
-
     return success;
 }
 
 bool loadSound()
 {
 
-    //Loading success flag
+    // Loading success flag
     bool success = true;
 
     if( SDL_LoadWAV("foodPickup.wav", &wavSpec, &wavBuffer, &wavLength) == NULL ){
@@ -163,12 +152,11 @@ bool loadSound()
 
     deviceId = SDL_OpenAudioDevice(NULL, 0, &wavSpec, NULL, 0);
 
-    // unpauses the audio
+    // Unpauses the audio
     SDL_PauseAudioDevice(deviceId, 0);
 
     return success;
 }
-
 
 void playSound()
 {
@@ -179,10 +167,10 @@ void playSound()
 
 SDL_Texture* loadTexture( char *path )
 {
-    //The final texture
+    // The final texture
     SDL_Texture* newTexture = NULL;
     
-    //Load image at specified path
+    // Load image at specified path
     SDL_Surface* loadedSurface = IMG_Load( path );
     if( loadedSurface == NULL )
     {
@@ -190,35 +178,42 @@ SDL_Texture* loadTexture( char *path )
     }
     else
     {
-        //Create texture from surface pixels
+        // Create texture from surface pixels
         newTexture = SDL_CreateTextureFromSurface( renderer, loadedSurface );
         if( newTexture == NULL )
         {
             printf( "Unable to create texture from %s! SDL Error: %s\n", path, SDL_GetError() );
         }
         
-        //Get rid of old loaded surface
+        // Get rid of old loaded surface
         SDL_FreeSurface( loadedSurface );
     }
     
     return newTexture;
 }
 
+
+// Exit operations
 void closeAll()
 {
-    //Free loaded image
+    // Free loaded image
     SDL_DestroyTexture( texture );
     texture = NULL;
     
-    //Destroy window
+    // Destroy window
     SDL_DestroyRenderer( renderer );
     SDL_DestroyWindow( window );
     window = NULL;
     renderer = NULL;
+
+    // Close Audio and free buffer for audio
+    SDL_CloseAudio();
+	SDL_FreeWAV(wavBuffer);
     
-    //Quit SDL subsystems
+    // Quit SDL subsystems
     IMG_Quit();
     SDL_Quit();
+    printf("CLEANUP DONE\n");
 }
 
 

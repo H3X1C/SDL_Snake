@@ -1,11 +1,9 @@
 //
 //  snakeConstructor.h
-
 //
 
 #ifndef snakeConstructor_h
 #define snakeConstructor_h
-
 
 #include "structs.h"
 
